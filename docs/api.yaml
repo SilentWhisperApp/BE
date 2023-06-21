@@ -1,0 +1,420 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/kristainputra98/SilentWhisperApp/1.0.0
+info:
+  license: 
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0.0"
+  title: SilentWhisperApp
+  description:
+    This is an example of using OAuth2 Password Flow in a specification to
+    describe security to your API.  
+paths:
+  /login:
+    post:
+      security: [{}]
+      operationId: LogInUser
+      tags:
+      - Auth
+      summary: Login Users
+      description: Feature for authenticating user, could use one of email, phone number or username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                identifier:
+                  oneOf:
+                    - type: string
+                      format: email
+                      example: example@exaple.com
+                      description: email
+                    - type: string
+                      pattern: "^a-z0-9_-816$"
+                      example: kristain09
+                      description: username
+                    - type: string
+                      pattern: "^0-91014$"
+                      example: '081223536464'
+                      description: phone
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 20
+                  pattern: "^(?=.*A-Z)(?=.*a-z)(?=.*0-9).*$"
+                  example: Password09
+                  description: password must be contains at least 1 capitalize and contains number (8-20 characters)
+              required:
+                  - identifier
+                  - password
+      responses:
+        200:
+          description: Succes Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/succesResponse'
+              example:
+                data:
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk
+                code_meta:
+                  code: 200 
+                  message: "succes login"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: "#/components/responses/500"
+  /register:
+    post: 
+      security: [{}]
+      operationId: RegisterUser
+      tags: 
+        -  Auth
+      summary: Register User
+      description: Feature for create new user using mobile number, email, username, firstname, lastname and password
+      requestBody:
+        required: true
+        content: 
+          multipart/formdata:
+            schema: 
+              type: object
+              properties:
+                mobile_number:
+                  type: string
+                  example: '081223536464'
+                email:
+                  type: string
+                  example: example@example.com
+                username:
+                  type: string
+                  example: username09
+                first_name:
+                  type: string
+                  example: firstname
+                last_name:
+                  type: string
+                  example: lastname
+                password:
+                  type: string
+                  example: Password123
+                confirm_password:
+                  type: string
+                  example: Password123
+      responses: 
+        201:
+          description: Succes Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/succesResponse'
+              example:
+                code_meta:
+                  code: 201 
+                  message: "succes to create user"
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: "#/components/responses/409"
+        500:
+          $ref: "#/components/responses/500"
+
+          # OTP, chats, wallet, top up, nearbies, update profile, post status
+
+  /register/{user_id}:
+    parameters: 
+      - name: user_id
+        in:  path
+        required: true
+        schema: 
+          type: string
+          example: '12314'
+    put:
+      security: [{}] 
+      operationId: VerifyUser
+      summary: update user account status as activated
+      description: feature for verify user email and phone number
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties: 
+                email_otp:
+                  type: string
+                  example: "454745"
+                phone_number_otp:
+                  type: string
+                  example: "12314"
+      responses: 
+        200:
+          description: Succes Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/succesResponse'
+              example:
+                code_meta:
+                  code: 200 
+                  message: "succes activate account"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: "#/components/responses/500"
+  /register/verification-status/{user_id}:
+    parameters: 
+      - name: user_id
+        in:  path
+        required: true
+        schema: 
+          type: string
+          example: '12314'
+    get: 
+      security: [{}] 
+      operationId: UserVerificationStatus
+      summary: Get Verification Status
+      description: feature for verify user email and phone number
+      responses: 
+        200:
+          description: Succes Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/succesResponse'
+              example:
+                code_meta:
+                  code: 200 
+                  message: "succes get verification status"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: "#/components/responses/500"
+  /chats:
+    get:
+      operationId: Chats1
+      summary: Get All Chats from users
+      security:
+        - JWTAuth: []
+      responses: 
+        200:
+          description: Succes Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/succesResponse'
+              example:
+                data:
+                - chat_buddy:
+                    id: 1
+                    username: chat_buddy1
+                    last_message: Hi This is my last message
+                    total_unread_messages: 3
+                    last_message_time: YYYY-MM-DDTHH:MM:SS
+                code_meta:
+                  code: 200 
+                  message: "succes get verification status"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: "#/components/responses/500"
+        401:
+          $ref: "#/components/responses/401"
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    succesResponse:
+      type: object
+      properties:
+        data:
+          type: object
+        code_meta:
+          type: object
+        pagination_meta:
+          type: object
+  responses:
+    400:
+      description: Status Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 400
+                  message: 
+                    type: string
+                    example: bad request
+    401:
+      description: Status Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 401
+                  message: 
+                    type: string
+                    example: Not Unauthorized
+    402:
+      description: Status Payment Required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 402
+                  message: 
+                    type: string
+                    example: status payment required
+    403:
+      description: Status forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 403
+                  message: 
+                    type: string
+                    example: status forbidden
+    404:
+      description: Status Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 404
+                  message: 
+                    type: string
+                    example: Not Found
+    408:
+      description: Request TimeOut
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 408
+                  message: 
+                    type: string
+                    example: Request Time Out
+    409:
+      description: Status Duplicate
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 409
+                  message: 
+                    type: string
+                    example: duplicate data
+    413:
+      description: Content too large
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 413
+                  message: 
+                    type: string
+                    example: content too large
+    415:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 415
+                  message: 
+                    type: string
+                    example: unsupported media type 
+    429:
+      description: too many request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 429
+                  message: 
+                    type: string
+                    example: too many request
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code_meta:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 500
+                  message: 
+                    type: string
+                    example: internal server error
+    
